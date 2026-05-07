@@ -1,0 +1,1 @@
+# This commit is fior understanding git --amend command

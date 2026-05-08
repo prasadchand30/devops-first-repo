@@ -2,11 +2,14 @@
 - name: variables
   hosts: all
   become: yes
-  vars:
-    name: "prasad"
-    company: "hexaware"
-    role: "devops engineer"
+  vars_prompt:
+   - name: username
+     prompt: please enter username
+     private: false
+   - name: password
+     prompt: please enter your password
+     private: yes
   tasks:
   - name: print information
     ansible.builtin.debug:
-      msg: this is {{name}} and woeking in {{company}} as a {{role}}
+      msg: "Hi, username: {{username}}, password: {{password}}"

@@ -1,0 +1,12 @@
+---
+- name: variables
+  hosts: all
+  become: yes
+  vars:
+    name: "prasad"
+    company: "hexaware"
+    role: "devops engineer"
+  tasks:
+  - name: print information
+    ansible.builtin.debug:
+      msg: this is {{name}} and woeking in {{company}} as a {{role}}

@@ -1,0 +1,12 @@
+---
+- name: loops
+  hosts: all
+  become: yes
+  tasks:
+  - name: install some packages and delete some packages
+    ansible.builtin.dnf:
+      name: "{{ item.name }}"
+      state: "{{ item.state}}"
+    loop:
+   - {name: 'nginx', state: 'installed'}
+   - {name: 'apache', state: 'absent'}

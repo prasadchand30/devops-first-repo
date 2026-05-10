@@ -1,0 +1,71 @@
+---
+- name: configure backend server
+  hosts: all
+  become: yes
+  tasks:
+  - name: disable default nodejs
+    ansible.builtin.command: dnf module disable nodejs -y
+
+  - name: enable nodejs2.0
+    ansible.builtin.command: dnf moodule enable nodejs2.0 -y
+
+  - name: install nodejs
+    ansible.builtin.dnf:
+      name: "{{ item }}"
+      state: installed
+    loop:
+    - nodejs
+    - mysql
+
+  - name: add username
+    ansible.builtin.user:
+      name: expense
+
+  - name: create directory
+    ansible.builtin.file:
+      path: /app
+      state: present
+
+  - name: downloading the file
+    ansible.builtin.gget_url:
+      url: https://prasadchand30.com/app/get/hostname
+      dest: /tmp/backend.zip
+
+  - name: unarchive the zip file
+    ansible.builtin.unarchive:
+      src: /tmp/backend.zip
+      dest: /app
+      remote_src: yes
+
+  - name: installing dependencies
+    ansible.builtin.command: npm install
+    args:
+      chdir: /app
+
+  - name: installing python dependencies for mysql
+    community.mysql.mysql_db:
+      name:
+      - pymysql
+      - crypotography
+    executable: pip3.9
+
+  - name: make the connection and import the data
+    community.mysql.mysql_db:
+      login_host: "{{ login_host }}"
+      login_user: root
+      login_password: "{{ login_password}}"
+      name: all
+      target: /tmp/dump.sql.bz2
+      state: import
+
+  - name: reload deamon 
+    ansible.builtin.systemd_service:
+      deamon_reload: true
+  
+  - name: restart and enable service
+    ansible.builtin.service:
+      name: backend
+      state: restarted
+      enabled: yes
+
+  

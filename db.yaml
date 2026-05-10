@@ -9,11 +9,20 @@
     ansible.builtin.dnf:
       name: mysql
       state: installed
+      
   - name: start and enable mysql server
     ansible.builtin.service:
       name: mysqld
       state: started
       enabled: yes
+
+  - name: install mysql python dependencies
+    ansible.builtin.pip:
+      name:
+      - pymysql
+      - cryptography
+    executable: pip3.9
+
   - name: check DB connection
     commmunity.mysql.mysql_info:
       login_user: chand
